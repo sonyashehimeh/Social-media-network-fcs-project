@@ -1,64 +1,92 @@
-import networkx as nx
-import matplotlib.pyplot as plt
-from user import User
-
-class NetworkGraph:
+class Graph:
     def __init__(self):
-        self.graph = nx.Graph()
-    
-    def add_user(self, user):
-        if isinstance(user, User):  ##
-            self.graph.add_node(user.user_id, name=user.name)
-    
-    def remove_user(self, user):
        
-        if isinstance(user, User):
-            self.graph.remove_node(user.user_id)
-    
-    def add_friend(self, user1, user2):
-        if isinstance(user1, User) and isinstance(user2, User):
-            self.graph.add_edge(user1.user_id, user2.user_id)
-    
-    def remove_friend(self, user1, user2):
-        if isinstance(user1, User) and isinstance(user2, User):
-            self.graph.remove_edge(user1.user_id, user2.user_id)
-    
-    def Breadth_First_Search(self, start_user):
-        if start_user.user_id in self.graph:
-            Breadth_First_Search_edges = list(nx.Breadth_First_Search_edges(self.graph, source=start_user.user_id))
-           
-            Breadth_First_Search_nodes = {start_user.user_id}
-           
-            for edge in Breadth_First_Search_edges:
-                Breadth_First_Search_nodes.update(edge)
-           
-            return list(Breadth_First_Search_nodes)
+        self.adjacency_list = {} # created empty lisyt
+
+    def add_user(self, user): #adding user 
+        if user.user_id not in self.adjacency_list:
+            self.adjacency_list[user.user_id] = []
+
+    def remove_user(self, user_id): #removint user 
+        if user_id in self.adjacency_list:
+            del self.adjacency_list[user_id]
+            for friends in self.adjacency_list.values():
+                if user_id in friends:
+                    friends.remove(user_id)
+
+    def add_frnds(self, user1_id, user2_id):
+        if user1_id in self.adjacency_list and user2_id in self.adjacency_list:
+            self.adjacency_list[user1_id].append(user2_id) # user2 added to frnds of user1
+            self.adjacency_list[user2_id].append(user1_id)  #same here
+
+    def remove_frnds(self, user1_id, user2_id):
+        if user1_id in self.adjacency_list and user2_id in self.adjacency_list:
+            if user2_id in self.adjacency_list[user1_id]: #removing frnds
+                self.adjacency_list[user1_id].remove(user2_id)
+            if user1_id in self.adjacency_list[user2_id]:
+                self.adjacency_list[user2_id].remove(user1_id)
+
+    def bfs(self, start_user_id):
+        visited = set()
+        queue = [start_user_id]
+        traversal = []
+
+        while queue:
+            user_id = queue.pop(0)
+            if user_id not in visited:
+                visited.add(user_id)
+                
+                traversal.append(user_id)
+                queue.extend(self.adjacency_list[user_id])
         
-        return []
+        return traversal
 
-    def dfs(self, start_user):
-        if start_user.user_id in self.graph:
-            dfs_edges = list(nx.dfs_edges(self.graph, source=start_user.user_id))
-            dfs_nodes = {start_user.user_id}
-            for edge in dfs_edges:
-                dfs_nodes.update(edge)
-            return list(dfs_nodes)
-        return []
+    def dfs(self, start_user_id):
+        visited = set()
+        
+        stack = [start_user_id]
+        traversal = []
+
+        while stack:
+            user_id = stack.pop()
+            if user_id not in visited:
+                visited.add(user_id)
+                traversal.append(user_id)
+                stack.extend(self.adjacency_list[user_id])
+        
+        return traversal
+
+    def dijkstra_algo(self, start_user_id, end_user_id):
+        
+        distances = {user: float('inf') for user in self.adjacency_list}
+        
+        
+        distances[start_user_id] = 0
+        priority_queue = [(0, start_user_id)]
+        
+        while priority_queue:
+            current_distance, current_user = heapq.heappop(priority_queue)
     
-    def Dijkstra(self, user1, user2):
-        if user1.user_id in self.graph and user2.user_id in self.graph:
-           
-            try:
-                return nx.Dijkstra(self.graph, source=user1.user_id, target=user2.user_id)
-            except nx.NetworkXNoPath:
             
-                return None
+            for neighbor in self.adjacency_list[current_user]:
+                distance = current_distance + 1  # Assuming unweighted graph
+               
+               
+                if distance < distances[neighbor]:
+                    
+                    distances[neighbor] = distance
+                    heapq.heappush(priority_queue, (distance, neighbor))
+        
+        return distances[end_user_id]
 
-        return None
-    
-    def connections(self):
-        return list(nx.connections(self.graph))
+    def connected_elements(self):
+        visited = set()
+        elements = []
 
-    def visualization(self):
-        pos = nx.spring_layout(self.graph)
-        plt.show()
+        for user in self.adjacency_list:
+            if user not in visited:
+                element = self.dfs(user)
+                visited.update(element)
+                elements.append(element)
+        
+        return elements

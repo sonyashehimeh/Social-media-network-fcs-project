@@ -1,83 +1,52 @@
-
-import networkx as nx
-from graph import NetworkGraph
+from graph import Graph
 from user import User
+import visualization as vz
 
-def calculate_network_statistics(graph):
-    number_of_users = len(graph.graph.nodes)
-    num_edges = len(graph.graph.edges)
-    density = nx.density(graph.graph)
-    avg_friends = num_edges / number_of_users if number_of_users > 0 else 0
-    return {
-        "number_of_users": number_of_users,
-        "num_edges": num_edges,
-        "density": density,
-        "avg_friends": avg_friends
-    }
+def menu():
+    network = Graph()
+    while True:
+        print("1. Sign Up") # to create account
+        print("2. Add Friend")
+        print("3. Remove Friend")
+        print("4. Remove Account") # to delete users account
+        print("5. Visualize Network")
+        print("6. Exit")
 
-def recommended_friends(user, graph):
-    if user.user_id not in graph.graph:
-        return []
-    
-    friends_of_friends = set()
-    for friend in graph.graph.neighbors(user.user_id):
-        friends_of_friends.update(graph.graph.neighbors(friend))
-    
-    friends_of_friends.discard(user.user_id)
-    friends_of_friends.difference_update(user.friends)
-    
-    return list(friends_of_friends)
+        #create menu 
+        choice = input("Enter choice: ")
 
-def main():     # check notepad notes for menu
- 
-    graph = NetworkGraph()
+        if choice == "1":
+            user_id = input("Enter user ID: ")
+            name = input("Enter name: ")
+            user = User(user_id, name)
+            network.add_user(user)
+            print(f"User {name} added.")
 
-    sally = User(1, "sally")
-    samar = User(2, "samar")
-    ali = User(3, "ali")
+        elif choice == "2":
+            user1_id = input("Enter your user ID: ")
+            user2_id = input("Enter friend's user ID: ")
+            network.add_frnds(user1_id, user2_id)
+            print(f"Friend {user2_id} added to user {user1_id}.")
 
-    graph.add_user(sally)
-    graph.add_user(samar)
-    graph.add_user(ali)
+        elif choice == "3":
+            user1_id = input("Enter your user ID: ")
+            user2_id = input("Enter friend's user ID to remove: ")
+            network.remove_frnds(user1_id, user2_id)
+            print(f"Friend {user2_id} removed from user {user1_id}.")
 
-    graph.add_friend(ali, samar)
-    graph.add_friend(samar, sally)
-    graph.add_friend(ali, sally)
+        elif choice == "4":
+            user_id = input("Enter user ID to remove: ")
+            network.remove_user(user_id)
+            print(f"User {user_id} removed.")
 
-    print("Network Stats:", calculate_network_statistics(graph))
-    print("Connections:", graph.connections())
-    print("Friend recommended for sally:", recommended_friends(sally, graph))
-    print("Breadth First Search for ali:", graph.Breadth_First_Search(ali))
-    print("Depth 1st search for Ali:", graph.dfs(ali))
-
-    graph.visualization()
-
-'''
-menu 
-        print("\n1. Sign Up\n2. Add Freinds\n3. Remove Friends\n4. Display Users\n5. Network Visualization\n6. Exit")
-        choice = input("Choose an option: ")
-
-        if choice == '1':
-            sign_up(social_network)
-        elif choice == '2':
-            user1_id = int(input("Enter your ID: "))
-            user2_id = int(input("Enter friend's ID: "))
-
-            add_relationship(social_network, user1_id, user2_id)
-        elif choice == '3': user1_id = int(input("Enter your ID: "))
-            user2_id = int(input("Enter friend's ID: "))
-            remove_relationship(social_network, user1_id, user2_id)
-        elif choice == '4':
-            display_users(social_network)
-        elif choice == '5':
-            visualize_graph(social_network)
-        else: if()
-            choice == '6': print("exit")
+        elif choice == "5":
+            vz.visualize_network(network)
+        
+        elif choice == "6": #print("exit")
             break
-'''
+
+        else:
+            print("Invalid choice. Please try again.")
 
 if __name__ == "__main__":
-    main()
-    
-
-
+    menu()
