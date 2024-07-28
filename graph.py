@@ -10,21 +10,21 @@ class Graph:
     def remove_user(self, user_id): #removint user 
         if user_id in self.adjacency_list:
             del self.adjacency_list[user_id]
-            for friends in self.adjacency_list.values():
-                if user_id in friends:
-                    friends.remove(user_id)
+            for frnds in self.adjacency_list.values():
+                if user_id in frnds:
+                    frnds.remove(user_id)
 
-    def add_frnds(self, user1_id, user2_id):
-        if user1_id in self.adjacency_list and user2_id in self.adjacency_list:
-            self.adjacency_list[user1_id].append(user2_id) # user2 added to frnds of user1
-            self.adjacency_list[user2_id].append(user1_id)  #same here
+    def add_frnds(self, userNum1_id, userNum2_id):
+        if userNum1_id in self.adjacency_list and userNum2_id in self.adjacency_list:
+            self.adjacency_list[userNum1_id].append(userNum2_id) # user number 2 added to frnds of id of user 1 
+            self.adjacency_list[userNum2_id].append(userNum1_id)  #same here
 
-    def remove_frnds(self, user1_id, user2_id):
-        if user1_id in self.adjacency_list and user2_id in self.adjacency_list:
-            if user2_id in self.adjacency_list[user1_id]: #removing frnds
-                self.adjacency_list[user1_id].remove(user2_id)
-            if user1_id in self.adjacency_list[user2_id]:
-                self.adjacency_list[user2_id].remove(user1_id)
+    def remove_frnds(self, userNum1_id, userNum2_id):
+        if userNum1_id in self.adjacency_list and userNum2_id in self.adjacency_list:
+            if userNum2_id in self.adjacency_list[userNum1_id]: #removing frnds
+                self.adjacency_list[userNum1_id].remove(userNum2_id)
+            if userNum1_id in self.adjacency_list[userNum2_id]:
+                self.adjacency_list[userNum2_id].remove(userNum1_id)
 
     def bfs(self, start_user_id):
         visited = set()

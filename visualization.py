@@ -1,11 +1,11 @@
 import networkx as nx
 import matplotlib.pyplot as plt
 
-def visualize_network(graph):
+def visualization_of_network(graph):
     G = nx.Graph()
-    for user, friends in graph.adjacency_list.items():
-        for friend in friends:
-            G.add_edge(user, friend)
+    for user, frnds in graph.adjacency_list.items():
+        for frnd in frnds:
+            G.add_edge(user, frnd)
     
     nx.draw(G, with_labels=True)
     plt.show()
