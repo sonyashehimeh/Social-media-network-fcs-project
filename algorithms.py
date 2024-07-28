@@ -35,7 +35,7 @@ class Graph:
 
     
 
-     def dfs(self, start_user_id):
+    def dfs(self, start_user_id):
         visited = set()
         stack = [start_user_id]
         traversal = []
